@@ -73,9 +73,19 @@ $app->post('/todo/add', function (Request $request) use ($app) {
     $user_id = $user['id'];
     $description = $request->get('description');
 
+    if ($description != NULL)
+    {
     $sql = "INSERT INTO todos (user_id, description) VALUES ('$user_id', '$description')";
     $app['db']->executeUpdate($sql);
+    
+    }
+    else
+    {
+        $sql = "INSERT INTO todos (user_id) VALUES ('$user_id')";
+    $app['db']->executeUpdate($sql);
 
+    }
+    
     return $app->redirect('/todo');
 });
 
@@ -84,6 +94,6 @@ $app->match('/todo/delete/{id}', function ($id) use ($app) {
 
     $sql = "DELETE FROM todos WHERE id = '$id'";
     $app['db']->executeUpdate($sql);
-
+    $app['session']->set('del_confirmation', 'true');
     return $app->redirect('/todo');
 });
